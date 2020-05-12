@@ -4,7 +4,7 @@ fetch("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/maste
 
 function showChart(data) {
   const w = 800;
-  const h = 600;
+  const h = 400;
   const padding = 50;
   const parseDate = d3.timeParse("%Y-%m-%d");
 
@@ -21,16 +21,27 @@ function showChart(data) {
   const svg = d3.select("#root")
     .append("svg")
     .attr("width", w)
-    .attr("height", h);
+    .attr("height", h)
+    .style("background", "LightCyan")
+    .style("padding", "10px");
 
   const xAxis = d3.axisBottom(xScale)
     .tickFormat(d3.timeFormat("%Y"));
   const yAxis = d3.axisLeft(yScale);
 
   const tooltip = d3.select("#root")
-    .append("div")
+    .append("span")
     .attr("id", "tooltip")
-    .style("opacity", 0);
+    .style("position", "absolute")
+    .style("display", "inline-block")
+    .style("opacity", 0)
+    .style("background", "Ivory")
+    .style("margin", "300px auto auto auto")
+    .style("padding", "5px");
+
+  const firstSegment = Math.floor(data.length / 3);
+  const secondSegment = Math.floor(data.length * 2 / 3);
+  const barWidth = 2;
 
   svg.selectAll("rect")
     .data(data)
@@ -39,22 +50,25 @@ function showChart(data) {
     .attr("class", "bar")
     .attr("x", (d, i) => xScale(parseDate(data[i][0])))
     .attr("y", (d, i) => yScale(data[i][1]))
-    .attr("width", 2)
+    .attr("width", barWidth)
     .attr("height", (d, i) => h - padding - yScale(data[i][1]))
     .attr("data-date", (d, i) => data[i][0])
     .attr("data-gdp", (d, i) => data[i][1])
-    .on("mouseover", (d, i) => {
-      tooltip.transition()
-        .duration(200)
-        .style('opacity', 1);
-      tooltip.html(`Date:${data[i][0]} GDP:${data[i][1]}`)
-      tooltip.attr("data-date", data[i][0])
+    .attr("fill", (d, i) => {
+      if (i <= firstSegment) {
+        return "slateBlue";
+      } else if (i > firstSegment && i <= secondSegment) {
+        return "Plum";
+      } else {
+        return "pink";
+      }
     })
-    .on("mouseout", d => {
-      tooltip.transition()
-        .duration(200)
-        .style('opacity', 0);
-    });
+    .on("mouseover", (d, i) => {
+      tooltip.style('opacity', 1)
+        .html(`Date:${data[i][0]}<br>GDP:${data[i][1]}`)
+        .attr("data-date", data[i][0]);
+    })
+    .on("mouseout", d => tooltip.style('opacity', 0));
 
   svg.append("g")
     .attr("id", "x-axis")
