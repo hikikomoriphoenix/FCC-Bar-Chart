@@ -5,7 +5,7 @@ fetch("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/maste
 function showChart(data) {
   const w = 800;
   const h = 400;
-  const padding = 50;
+  const padding = 70;
   const parseDate = d3.timeParse("%Y-%m-%d");
 
   const xScale = d3.scaleTime()
@@ -73,10 +73,22 @@ function showChart(data) {
   svg.append("g")
     .attr("id", "x-axis")
     .attr("transform", `translate(${0}, ${h - padding})`)
-    .call(xAxis);
+    .call(xAxis)
+    .append("text")
+    .text("Year")
+    .style("text-anchor", "middle")
+    .style("font-size", "18px")
+    .attr("fill", "black")
+    .attr("transform", `translate(${w/2}, ${50})`);
 
   svg.append("g")
     .attr("id", "y-axis")
     .attr("transform", `translate(${padding}, ${0})`)
-    .call(yAxis);
+    .call(yAxis)
+    .append("text")
+    .text("GDP")
+    .style("text-anchor", "middle")
+    .style("font-size", "18px")
+    .attr("fill", "black")
+    .attr("transform", `translate(${-50}, ${h/2})rotate(-90)`);
 }
